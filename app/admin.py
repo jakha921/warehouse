@@ -17,8 +17,8 @@ class ReceptionAdmin(admin.ModelAdmin):
     list_per_page = 15
     list_max_show_all = 100
     date_hierarchy = 'receiver_date'
-    readonly_fields = ['receiver_date']
-    list_editable = ['product_price']
+    # readonly_fields = ['receiver_date']
+    # list_editable = ['product_price']
 
 
 @admin.register(Product)
