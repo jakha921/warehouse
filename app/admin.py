@@ -10,6 +10,7 @@ admin.site.index_title = 'Mahsulotlar ombori'
 
 @admin.register(Reception)
 class ReceptionAdmin(admin.ModelAdmin):
+    # pass
     list_display = ['product_name', 'product_count', 'product_price', 'sender', 'receiver', 'receiver_date']
     search_fields = ['product_name', 'sender', 'receiver']
     list_filter = ['receiver_date']
@@ -17,8 +18,8 @@ class ReceptionAdmin(admin.ModelAdmin):
     list_per_page = 15
     list_max_show_all = 100
     date_hierarchy = 'receiver_date'
-    readonly_fields = ['receiver_date']
-    list_editable = ['product_price']
+    # readonly_fields = ['receiver_date']
+    # list_editable = ['product_price']
 
 
 @admin.register(Product)
