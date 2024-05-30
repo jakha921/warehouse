@@ -10,6 +10,7 @@ admin.site.index_title = 'Mahsulotlar ombori'
 
 @admin.register(Reception)
 class ReceptionAdmin(admin.ModelAdmin):
+    # pass
     list_display = ['product_name', 'product_count', 'product_price', 'sender', 'receiver', 'receiver_date']
     search_fields = ['product_name', 'sender', 'receiver']
     list_filter = ['receiver_date']
