@@ -10,16 +10,12 @@ admin.site.index_title = 'Mahsulotlar ombori'
 
 @admin.register(Reception)
 class ReceptionAdmin(admin.ModelAdmin):
-    # pass
     list_display = ['product_name', 'product_count', 'product_price', 'sender', 'receiver', 'receiver_date']
     search_fields = ['product_name', 'sender', 'receiver']
-    list_filter = ['receiver_date']
     ordering = ['-receiver_date']
     list_per_page = 15
     list_max_show_all = 100
     date_hierarchy = 'receiver_date'
-    # readonly_fields = ['receiver_date']
-    # list_editable = ['product_price']
 
 
 @admin.register(Product)
@@ -34,8 +30,8 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Warehouse)
 class WarehouseAdmin(admin.ModelAdmin):
     list_display = ['product', 'count']
-    search_fields = ['product']
-    list_filter = ['product']
+    search_fields = ['product__name']
+    autocomplete_fields = ['product']
     ordering = ['product']
     list_per_page = 15
     list_max_show_all = 100
@@ -43,9 +39,8 @@ class WarehouseAdmin(admin.ModelAdmin):
 
 @admin.register(Transmitting)
 class TransmittingAdmin(admin.ModelAdmin):
-    list_display = ['product', 'count']
-    search_fields = ['product']
-    list_filter = ['product']
-    ordering = ['product']
+    list_display = ['receiver', 'product', 'count']
+    search_fields = ['product__name', 'receiver', 'comment', 'department']
+    autocomplete_fields = ['product']
     list_per_page = 15
     list_max_show_all = 100
