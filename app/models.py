@@ -46,6 +46,25 @@ class Product(models.Model):
         ]
 
 
+class Staff(models.Model):
+    name = models.CharField(max_length=100, verbose_name='FIO', unique=True)
+    department = models.CharField(max_length=100, verbose_name='Bo\'limi', blank=True, null=True)
+    position = models.CharField(max_length=100, verbose_name='Lavozimi', blank=True, null=True)
+    phone = models.CharField(max_length=100, verbose_name='Telefon raqami', blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.name} {self.department or ""} '
+
+    class Meta:
+        verbose_name = 'Xodim'
+        verbose_name_plural = 'Xodimlar'
+        ordering = ['name']
+        db_table = 'staff'
+
+
 class Warehouse(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Mahsulot')
     count = models.IntegerField(verbose_name='Mahsulot soni')
@@ -68,7 +87,8 @@ class Warehouse(models.Model):
 class Transmitting(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Mahsulot')
     count = models.IntegerField(verbose_name='Mahsulot soni')
-    receiver = models.CharField(max_length=100, verbose_name='Qabul qiluvchi')
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, verbose_name='Qabul qiluvchi xodim', blank=True, null=True)
+    # receiver = models.CharField(max_length=100, verbose_name='Qabul qiluvchi', blank=True, null=True)
     receiver_date = models.DateField(verbose_name='Qabul qilingan sana')
     comment = models.TextField(blank=True, null=True, verbose_name='Izoh')
     department = models.CharField(max_length=100, verbose_name='Bo\'lim', blank=True, null=True)

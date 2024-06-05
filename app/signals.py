@@ -31,16 +31,18 @@ def update_or_create_warehouse(sender, instance, **kwargs):
 # create transmitting signal for updating warehouse
 @receiver(pre_save, sender=Transmitting)
 def update_warehouse(sender, instance, **kwargs):
-    try:
-        warehouse = Warehouse.objects.get(product=instance.product)
-    except Warehouse.DoesNotExist:
-        raise ValidationError('Mahsulot omborda mavjud emas')
-    if warehouse.count < instance.count:
-        raise ValidationError('Omborda yetarli mahsulot yo\'q')
-    else:
-        warehouse.count -= instance.count
-        warehouse.save()
-        print('Warehouse updated')
+    print('sender', sender)
+    if instance.pk is None:
+        try:
+            warehouse = Warehouse.objects.get(product=instance.product)
+        except Warehouse.DoesNotExist:
+            raise ValidationError('Mahsulot omborda mavjud emas')
+        if warehouse.count < instance.count:
+            raise ValidationError('Omborda yetarli mahsulot yo\'q')
+        else:
+            warehouse.count -= instance.count
+            warehouse.save()
+            print('Warehouse updated')
 
 
 # delete transmitting signal for updating warehouse

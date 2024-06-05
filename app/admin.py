@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import Reception, Product, Warehouse, Transmitting
+from app.models import Reception, Product, Warehouse, Transmitting, Staff
 
 # Register your models here.
 admin.site.site_header = 'Mahsulotlar ombori'
@@ -36,11 +36,38 @@ class WarehouseAdmin(admin.ModelAdmin):
     list_per_page = 15
     list_max_show_all = 100
 
+    actions = ['download_csv']
+
+    # action download csv file
+    def download_csv(modeladmin, request, queryset):
+        import csv
+        from django.http import HttpResponse
+        import io
+
+        f = io.StringIO()
+        writer = csv.writer(f)
+        writer.writerow(['product', 'count'])
+        for s in queryset:
+            writer.writerow([s.product, s.count])
+        f.seek(0)
+        response = HttpResponse(f, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=warehouse.csv'
+        return response
+
 
 @admin.register(Transmitting)
 class TransmittingAdmin(admin.ModelAdmin):
-    list_display = ['receiver', 'product', 'count']
-    search_fields = ['product__name', 'receiver', 'comment', 'department']
-    autocomplete_fields = ['product']
-    list_per_page = 15
-    list_max_show_all = 100
+    list_display = ['staff', 'product', 'count']
+    search_fields = ['product__name', 'staff__name', 'comment', 'department']
+    autocomplete_fields = ['product', 'staff']
+    # list_per_page = 15
+    # list_max_show_all = 100
+
+
+@admin.register(Staff)
+class StaffAdmin(admin.ModelAdmin):
+    list_display = ['name', 'department', 'position', 'phone']
+    search_fields = ['name', 'department', 'position']
+    ordering = ['name']
+    # list_per_page = 15
+    # list_max_show_all = 100
