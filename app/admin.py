@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from app.models import Reception, Product, Warehouse, Transmitting, Staff
+from app.models import Reception, Product, Warehouse, Transmitting, Staff, Department
 
 # Register your models here.
 admin.site.site_header = 'Mahsulotlar ombori'
@@ -20,6 +20,15 @@ class ReceptionAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
+    ordering = ['name']
+    list_per_page = 15
+    list_max_show_all = 100
+
+
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
     list_display = ['name']
     search_fields = ['name']
     ordering = ['name']
@@ -58,7 +67,7 @@ class WarehouseAdmin(admin.ModelAdmin):
 @admin.register(Transmitting)
 class TransmittingAdmin(admin.ModelAdmin):
     list_display = ['staff', 'product', 'count']
-    search_fields = ['product__name', 'staff__name', 'comment', 'department']
+    search_fields = ['product__name', 'staff__name', 'comment', 'department__name']
     autocomplete_fields = ['product', 'staff']
     # list_per_page = 15
     # list_max_show_all = 100
@@ -67,7 +76,8 @@ class TransmittingAdmin(admin.ModelAdmin):
 @admin.register(Staff)
 class StaffAdmin(admin.ModelAdmin):
     list_display = ['name', 'department', 'position', 'phone']
-    search_fields = ['name', 'department', 'position']
+    search_fields = ['name', 'position']
     ordering = ['name']
+    autocomplete_fields = ['department']
     # list_per_page = 15
     # list_max_show_all = 100

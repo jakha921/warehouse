@@ -46,9 +46,28 @@ class Product(models.Model):
         ]
 
 
+class Department(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Bo\'lim nomi', unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.name}'
+
+    class Meta:
+        verbose_name = 'Bo\'lim'
+        verbose_name_plural = 'Bo\'limlar'
+        ordering = ['name']
+        db_table = 'department'
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
+
 class Staff(models.Model):
     name = models.CharField(max_length=100, verbose_name='FIO', unique=True)
-    department = models.CharField(max_length=100, verbose_name='Bo\'limi', blank=True, null=True)
+    # department = models.CharField(max_length=100, verbose_name='Bo\'limi', blank=True, null=True)
+    department = models.ForeignKey(Department, on_delete=models.PROTECT, verbose_name='Bo\'limi', blank=True, null=True)
     position = models.CharField(max_length=100, verbose_name='Lavozimi', blank=True, null=True)
     phone = models.CharField(max_length=100, verbose_name='Telefon raqami', blank=True, null=True)
 
@@ -56,7 +75,7 @@ class Staff(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.name} {self.department or ""} '
+        return f'{self.name} {self.department_id or ""} '
 
     class Meta:
         verbose_name = 'Xodim'
@@ -66,7 +85,7 @@ class Staff(models.Model):
 
 
 class Warehouse(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Mahsulot')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name='Mahsulot')
     count = models.IntegerField(verbose_name='Mahsulot soni')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -85,9 +104,10 @@ class Warehouse(models.Model):
 
 
 class Transmitting(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Mahsulot')
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, verbose_name='Mahsulot')
     count = models.IntegerField(verbose_name='Mahsulot soni')
-    staff = models.ForeignKey(Staff, on_delete=models.CASCADE, verbose_name='Qabul qiluvchi xodim', blank=True, null=True)
+    staff = models.ForeignKey(Staff, on_delete=models.PROTECT, verbose_name='Qabul qiluvchi xodim', blank=True,
+                              null=True)
     # receiver = models.CharField(max_length=100, verbose_name='Qabul qiluvchi', blank=True, null=True)
     receiver_date = models.DateField(verbose_name='Qabul qilingan sana')
     comment = models.TextField(blank=True, null=True, verbose_name='Izoh')
