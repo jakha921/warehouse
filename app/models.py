@@ -129,3 +129,22 @@ class Transmitting(models.Model):
         indexes = [
             models.Index(fields=['receiver_date', 'product']),
         ]
+
+
+class Debt(models.Model):
+    name = models.CharField(max_length=100, verbose_name='Qarz nomi')
+    debt_amount = models.IntegerField(verbose_name='Qarz summasi')
+    comment = models.TextField(blank=True, null=True, verbose_name='Izoh')
+    image = models.ImageField(upload_to='debts/', blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.name} - {self.debt_amount}'
+
+    class Meta:
+        verbose_name = 'Qarz'
+        verbose_name_plural = 'Qarzlar'
+        ordering = ['-created_at', 'name']
+        db_table = 'debt'
