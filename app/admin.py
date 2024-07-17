@@ -1,4 +1,6 @@
+import openpyxl
 from django.contrib import admin
+from django.http import HttpResponse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
@@ -16,7 +18,6 @@ class ReceptionAdmin(admin.ModelAdmin):
     search_fields = ['product_name', 'sender', 'receiver']
     ordering = ['-receiver_date']
     list_per_page = 15
-    list_max_show_all = 100
     date_hierarchy = 'receiver_date'
 
 
@@ -26,7 +27,6 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['name']
     ordering = ['name']
     list_per_page = 15
-    list_max_show_all = 100
 
 
 @admin.register(Department)
@@ -35,7 +35,6 @@ class DepartmentAdmin(admin.ModelAdmin):
     search_fields = ['name']
     ordering = ['name']
     list_per_page = 15
-    list_max_show_all = 100
 
 
 @admin.register(Warehouse)
@@ -45,9 +44,9 @@ class WarehouseAdmin(admin.ModelAdmin):
     autocomplete_fields = ['product']
     ordering = ['product']
     list_per_page = 15
-    list_max_show_all = 100
+    # list_max_show_all = 100
 
-    actions = ['download_csv']
+    actions = ['export_inventory_to_excel']
 
     # action download csv file
     def download_csv(modeladmin, request, queryset):
@@ -66,13 +65,39 @@ class WarehouseAdmin(admin.ModelAdmin):
         return response
 
 
+    def export_inventory_to_excel(modeladmin, request, queryset):
+        # Create an in-memory workbook
+        workbook = openpyxl.Workbook()
+        sheet = workbook.active
+        sheet.title = 'Room Inventory'
+
+        # Add header row
+        headers = ['Inventar', 'Inventar soni']
+        sheet.append(headers)
+
+        # Add data rows
+        for warehouse in queryset:
+            row = [
+                warehouse.product.name,
+                warehouse.count,
+            ]
+            sheet.append(row)
+
+        # Set the response as an Excel file
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename=warehouse_inventory.xlsx'
+        workbook.save(response)
+        return response
+
+    export_inventory_to_excel.short_description = "Excel-ga tanlangan inventarlarini yuklash"
+
+
 @admin.register(Transmitting)
 class TransmittingAdmin(admin.ModelAdmin):
     list_display = ['staff', 'product', 'count']
     search_fields = ['product__name', 'staff__name', 'comment', 'department__name']
     autocomplete_fields = ['product', 'staff']
-    # list_per_page = 15
-    # list_max_show_all = 100
+    list_per_page = 15
 
 
 @admin.register(Staff)
@@ -81,8 +106,7 @@ class StaffAdmin(admin.ModelAdmin):
     search_fields = ['name', 'position']
     ordering = ['name']
     autocomplete_fields = ['department']
-    # list_per_page = 15
-    # list_max_show_all = 100
+    list_per_page = 15
 
 
 @admin.register(Debt)
